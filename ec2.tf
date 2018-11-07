@@ -56,16 +56,7 @@ resource "aws_autoscaling_group" "kong" {
   max_size                  = "${var.asg_max_size}"
   min_size                  = "${var.asg_min_size}"
 
-  target_group_arns = ["${
-    compact(
-      concat(
-        aws_alb_target_group.external.*.arn,
-        aws_alb_target_group.internal.*.arn,
-        aws_alb_target_group.internal-admin.*.arn,
-        aws_alb_target_group.internal-gui.*.arn
-      )
-    )
-  }"]
+  load_balancers = ["${aws_elb.kong.id}"]
 
   tags = ["${concat(
       list(
