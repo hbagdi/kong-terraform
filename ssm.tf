@@ -18,37 +18,27 @@ resource "aws_kms_alias" "kong" {
 resource "aws_ssm_parameter" "ee-bintray-auth" {
   name  = "/${var.service}/${var.environment}/ee/bintray-auth"
   type  = "SecureString"
-  value = "placeholder"
+  value = "${var.ee_bintray_auth}"
 
   key_id = "${aws_kms_alias.kong.target_key_arn}"
-
-  lifecycle {
-    ignore_changes = ["value"]
-  }
 }
 
 resource "aws_ssm_parameter" "ee-license" {
   name  = "/${var.service}/${var.environment}/ee/license"
   type  = "SecureString"
-  value = "placeholder"
+  value = "${var.ee_license}"
 
   key_id = "${aws_kms_alias.kong.target_key_arn}"
 
-  lifecycle {
-    ignore_changes = ["value"]
-  }
 }
 
 resource "aws_ssm_parameter" "ee-admin-token" {
   name  = "/${var.service}/${var.environment}/ee/admin/token"
   type  = "SecureString"
-  value = "zg-kong-2-1"
+  value = "${var.ee_admin_token}"
 
   key_id = "${aws_kms_alias.kong.target_key_arn}"
 
-  lifecycle {
-    ignore_changes = ["value"]
-  }
 }
 
 resource "aws_ssm_parameter" "db-host" {
@@ -70,10 +60,6 @@ resource "aws_ssm_parameter" "db-password" {
 
   key_id = "${aws_kms_alias.kong.target_key_arn}"
 
-  lifecycle {
-    ignore_changes = ["value"]
-  }
-
   overwrite = true
 }
 
@@ -83,10 +69,6 @@ resource "aws_ssm_parameter" "db-master-password" {
   value = "${var.db_password}"
 
   key_id = "${aws_kms_alias.kong.target_key_arn}"
-
-  lifecycle {
-    ignore_changes = ["value"]
-  }
 
   overwrite = true
 }

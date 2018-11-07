@@ -187,14 +187,14 @@ variable "ee_pkg" {
   description = "Filename of the Enterprise Edition package"
   type        = "string"
 
-  default = "kong-enterprise-edition-0.31-1.zesty.all.deb"
+  default = "kong-enterprise-edition-0.33-2.zesty.all.deb"
 }
 
 variable "ce_pkg" {
   description = "Filename of the Community Edition package"
   type        = "string"
 
-  default = "kong-community-edition-0.12.3.zesty.all.deb"
+  default = "kong-community-edition-0.14.1.zesty.all.deb"
 }
 
 # Load Balancer settings
@@ -395,4 +395,19 @@ variable "redis_subnets" {
   type        = "string"
 
   default = "cache-subnets"
+}
+
+variable "ee_bintray_auth" {
+  description = "EE Bintray Auth"
+  default = "placeholder"
+}
+
+variable "ee_license" {
+  description = "EE license"
+  default = "placeholder"
+}
+
+variable "ee_admin_token" {
+  description = "EE Admin Token"
+  default = "secretPassword"
 }
