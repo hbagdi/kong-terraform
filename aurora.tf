@@ -5,6 +5,7 @@ resource "aws_rds_cluster" "kong" {
   master_username    = "${var.db_username}"
   master_password    = "${var.db_password}"
 
+  skip_final_snapshot = true
   backup_retention_period         = "${var.db_backup_retention_period}"
   db_subnet_group_name            = "${var.db_subnets}"
   db_cluster_parameter_group_name = "${var.service}-${var.environment}-cluster"
