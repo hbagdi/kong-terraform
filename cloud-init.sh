@@ -92,6 +92,8 @@ cat <<EOF > /etc/kong/kong.conf
 db_cache_ttl = 0
 mem_cache_size = 4096m
 
+proxy_access_log = off
+
 # Database settings
 database = postgres 
 pg_host = $DB_HOST
