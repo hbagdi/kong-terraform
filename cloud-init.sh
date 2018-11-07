@@ -89,6 +89,9 @@ cat <<EOF > /etc/kong/kong.conf
 # Notes:
 #   - See kong.conf.default for further information
 
+db_cache_ttl = 0
+mem_cache_size = 4096m
+
 # Database settings
 database = postgres 
 pg_host = $DB_HOST
@@ -136,6 +139,91 @@ echo "Initializing Kong"
 sudo -u kong kong migrations up
 sudo -u kong kong prepare
 echo "Done."
+
+cat <<'EOF' > /etc/sysctl.conf
+### IMPROVE SYSTEM MEMORY MANAGEMENT ###
+
+# Increase size of file handles and inode cache
+fs.file-max = 2097152
+
+### GENERAL NETWORK SECURITY OPTIONS ###
+
+# Number of times SYNACKs for passive TCP connection.
+net.ipv4.tcp_synack_retries = 2
+
+# Allowed local port range
+net.ipv4.ip_local_port_range = 2000 65535
+
+# Protect Against TCP Time-Wait
+net.ipv4.tcp_rfc1337 = 1
+
+# Decrease the time default value for tcp_fin_timeout connection
+net.ipv4.tcp_fin_timeout = 5
+
+# Decrease the time default value for connections to keep alive
+net.ipv4.tcp_keepalive_time = 900
+net.ipv4.tcp_keepalive_probes = 5
+net.ipv4.tcp_keepalive_intvl = 15
+
+### TUNING NETWORK PERFORMANCE ###
+
+# Avoid falling back to slow start after a connection goes idle
+net.ipv4.tcp_slow_start_after_idle = 0
+
+# Default Socket Receive Buffer
+net.core.rmem_default = 31457280
+
+# Enable syn cookies
+net.ipv4.tcp_syncookies: 1
+
+# Maximum Socket Receive Buffer
+net.core.rmem_max = 12582912
+
+# Default Socket Send Buffer
+net.core.wmem_default = 31457280
+
+# Maximum Socket Send Buffer
+net.core.wmem_max = 12582912
+
+# Increase number of incoming connections
+net.core.somaxconn = 65535
+
+# Increase number of incoming connections backlog
+net.core.netdev_max_backlog = 4194304
+
+# Increase the maximum amount of option memory buffers
+net.core.optmem_max = 25165824
+
+# Increase the maximum total buffer-space allocatable
+# This is measured in units of pages (4096 bytes)
+net.ipv4.tcp_mem = 33554432 33554432 33554432
+net.ipv4.udp_mem = 65536 131072 262144
+
+# Increase the read-buffer space allocatable
+net.ipv4.tcp_rmem = 8192 873800 33554432
+net.ipv4.udp_rmem_min = 16384
+
+# Increase the write-buffer-space allocatable
+net.ipv4.tcp_wmem = 4096 655360 33554432
+net.ipv4.udp_wmem_min = 16384
+
+# Increase the tcp-time-wait buckets pool size to prevent simple DOS attacks
+net.ipv4.tcp_max_tw_buckets = 1440000
+
+# Enable fast recycling of TIME_WAIT sockets
+net.ipv4.tcp_tw_recycle = 0
+
+# Allow reuse of sockets in TIME_WAIT state for new connections
+net.ipv4.tcp_tw_reuse = 1
+
+# Set backlog larger
+net.ipv4.tcp_max_syn_backlog: 4194304
+
+# CVSS2.6 The remote host implements TCP timestamps and therefore allows to compute the uptime
+net.ipv4.tcp_timestamps: 0
+
+EOF
+sysctl -p
 
 cat <<'EOF' > /usr/local/kong/nginx.conf
 worker_processes auto;
