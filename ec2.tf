@@ -24,7 +24,7 @@ resource "aws_launch_configuration" "kong" {
     "${aws_security_group.kong.id}",
   ]
 
-  associate_public_ip_address = false
+  associate_public_ip_address = true
   enable_monitoring           = true
   placement_tenancy           = "default"
   user_data                   = "${data.template_cloudinit_config.cloud-init.rendered}"
@@ -52,7 +52,7 @@ resource "aws_autoscaling_group" "kong" {
   desired_capacity          = "${var.asg_desired_capacity}"
   force_delete              = false
   health_check_grace_period = "${var.asg_health_check_grace_period}"
-  health_check_type         = "ELB"
+  health_check_type         = "EC2"
   max_size                  = "${var.asg_max_size}"
   min_size                  = "${var.asg_min_size}"
 
